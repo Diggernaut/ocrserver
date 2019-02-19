@@ -8,11 +8,42 @@ import (
 
 	"github.com/otiai10/marmoset"
 
-	"github.com/otiai10/ocrserver/controllers"
-	"github.com/otiai10/ocrserver/filters"
+	"github.com/natefinch/lumberjack"
+	"github.com/Diggernaut/ocrserver/controllers"
+	"github.com/Diggernaut/ocrserver/filters"
 )
 
-var logger *log.Logger
+var (
+	cfg    *viper.Viper
+	apikey string
+	port   string
+	ip     string
+	logger *log.Logger
+)
+
+func init() {
+	// SET UP LOGGER
+	log.SetOutput(&lumberjack.Logger{
+		Filename:   "/var/log/ocrserver.log",
+		MaxSize:    100, // megabytes
+		MaxBackups: 3,   // max files
+		MaxAge:     7,   // days
+	})
+	//log.SetOutput(os.Stdout)
+
+	// READING CONFIG
+	cfg = viper.New()
+	cfg.SetConfigName("config")
+	cfg.AddConfigPath("./")
+	err := cfg.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Error: cannot read config. Reason: %v\n", err)
+	}
+	apikey = cfg.GetString("apikey")
+	ip = cfg.GetString("ocr_bind_ip")
+	port = cfg.GetString("ocr_bind_port")
+}
+
 
 func main() {
 
@@ -27,15 +58,9 @@ func main() {
 	r.GET("/", controllers.Index)
 	r.Static("/assets", "./app/assets")
 
-	logger = log.New(os.Stdout, fmt.Sprintf("[%s] ", "ocrserver"), 0)
-	r.Apply(&filters.LogFilter{Logger: logger})
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		logger.Fatalln("Required env `PORT` is not specified.")
-	}
+	logger.Println("OCR web server started")
 	logger.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, r); err != nil {
+	if err := http.ListenAndServe(ip + ":" + port, r); err != nil {
 		logger.Println(err)
 	}
 }
