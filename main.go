@@ -52,9 +52,7 @@ func main() {
 	// API
 	r.GET("/status", controllers.Status)
 	r.POST("/base64", controllers.Base64)
-	f := filters.AuthFilter{
-		Apikey: apikey
-	}
+	f := filters.AuthFilter{Apikey: apikey}
 	r.Apply(f)
 	//r.POST("/file", controllers.FileUpload)
 	// Sample Page
