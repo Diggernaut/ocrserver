@@ -18,7 +18,6 @@ var (
 	apikey string
 	port   string
 	ip     string
-	logger *log.Logger
 )
 
 func init() {
@@ -47,19 +46,23 @@ func init() {
 
 func main() {
 
-	marmoset.LoadViews("./app/views")
+	//marmoset.LoadViews("./app/views")
 
 	r := marmoset.NewRouter()
 	// API
 	r.GET("/status", controllers.Status)
 	r.POST("/base64", controllers.Base64)
-	r.POST("/file", controllers.FileUpload)
+	f := filters.AuthFilter{
+		Apikey: apikey
+	}
+	r.Apply(f)
+	//r.POST("/file", controllers.FileUpload)
 	// Sample Page
-	r.GET("/", controllers.Index)
-	r.Static("/assets", "./app/assets")
+	//r.GET("/", controllers.Index)
+	//r.Static("/assets", "./app/assets")
 
-	logger.Println("OCR web server started")
-	logger.Printf("listening on port %s", port)
+	log.Println("OCR web server started")
+	log.Printf("listening on port %s", port)
 	if err := http.ListenAndServe(ip + ":" + port, r); err != nil {
 		logger.Println(err)
 	}
