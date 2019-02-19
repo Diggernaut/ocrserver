@@ -1,16 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log"
+
+	"github.com/Diggernaut/viper"
+
 	"net/http"
-	"os"
 
 	"github.com/otiai10/marmoset"
 
-	"github.com/natefinch/lumberjack"
 	"github.com/Diggernaut/ocrserver/controllers"
 	"github.com/Diggernaut/ocrserver/filters"
+	"github.com/natefinch/lumberjack"
 )
 
 var (
@@ -43,7 +44,6 @@ func init() {
 	port = cfg.GetString("ocr_bind_port")
 }
 
-
 func main() {
 
 	//marmoset.LoadViews("./app/views")
@@ -53,7 +53,7 @@ func main() {
 	r.GET("/status", controllers.Status)
 	r.POST("/base64", controllers.Base64)
 	f := filters.AuthFilter{Apikey: apikey}
-	r.Apply(f)
+	r.Apply(&f)
 	//r.POST("/file", controllers.FileUpload)
 	// Sample Page
 	//r.GET("/", controllers.Index)
@@ -61,7 +61,7 @@ func main() {
 
 	log.Println("OCR web server started")
 	log.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(ip + ":" + port, r); err != nil {
-		logger.Println(err)
+	if err := http.ListenAndServe(ip+":"+port, r); err != nil {
+		// logger.Println(err)
 	}
 }
