@@ -12,7 +12,7 @@ type AuthFilter struct {
 
 // ServeHTTP ...
 func (f *AuthFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Header.Get("Authorization") == f.Apikey {
+	if r.Header.Get("Diggernauth") == f.Apikey {
 		f.Next.ServeHTTP(w, r)
 	} else {
 		w.WriteHeader(http.StatusForbidden)
