@@ -20,10 +20,10 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 	render := marmoset.Render(w, true)
 
 	var body = new(struct {
-		Base64    string `json:"base64"`
-		Trim      string `json:"trim"`
-		Languages string `json:"languages"`
-		Whitelist string `json:"whitelist"`
+		Base64    string                `json:"base64"`
+		Trim      string                `json:"trim"`
+		Languages string                `json:"languages"`
+		Whitelist string                `json:"whitelist"`
 		PSM       gosseract.PageSegMode `json:"psm"`
 	})
 
@@ -57,8 +57,6 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 
 	client := gosseract.NewClient()
 	if body.PSM > 0 {
-		render.JSON(http.StatusBadRequest, fmt.Errorf("PSM %v", body.PSM))
-		return
 		client.SetPageSegMode(body.PSM)
 	}
 	defer client.Close()
