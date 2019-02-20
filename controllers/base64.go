@@ -57,6 +57,8 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 
 	client := gosseract.NewClient()
 	if body.PSM > 0 {
+		render.JSON(http.StatusBadRequest, fmt.Errorf("PSM %v", body.PSM))
+		return
 		client.SetPageSegMode(body.PSM)
 	}
 	defer client.Close()
