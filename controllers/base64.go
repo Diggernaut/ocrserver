@@ -24,6 +24,7 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 		Trim      string `json:"trim"`
 		Languages string `json:"languages"`
 		Whitelist string `json:"whitelist"`
+		PSM       gosseract.PageSegMode `json:"psm"`
 	})
 
 	err := json.NewDecoder(r.Body).Decode(body)
@@ -55,6 +56,9 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 	tempfile.Write(b)
 
 	client := gosseract.NewClient()
+	if body.PSM > 0 {
+		client.SetPageSegMode(body.PSM)
+	}
 	defer client.Close()
 
 	client.Languages = []string{"eng"}
