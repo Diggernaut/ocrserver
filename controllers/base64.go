@@ -42,7 +42,7 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		err := tempfile.Close()
 		if err != nil {
-			log.Println("cannot remove temp file, reason: %s", err.Error())
+			log.Println("cannot close temp file, reason: %s", err.Error())
 		}
 		err = os.Remove(tempfile.Name())
 		if err != nil {
