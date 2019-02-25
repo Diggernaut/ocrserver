@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -16,7 +17,7 @@ import (
 
 // Base64 ...
 func Base64(w http.ResponseWriter, r *http.Request) {
-
+	defer r.Body.Close()
 	render := marmoset.Render(w, true)
 
 	var body = new(struct {
@@ -39,8 +40,15 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer func() {
-		tempfile.Close()
-		os.Remove(tempfile.Name())
+		err := tempfile.Close()
+		if err != nil {
+			log.Println("cannot remove temp file, reason: %s", err.Error())
+		}
+		err = os.Remove(tempfile.Name())
+		if err != nil {
+			log.Println("cannot remove temp file, reason: %s", err.Error())
+		}
+
 	}()
 
 	if len(body.Base64) == 0 {
