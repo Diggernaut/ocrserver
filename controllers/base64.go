@@ -39,7 +39,7 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 		render.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	defer func() {
+	defer func(t *os.File) {
 		err := tempfile.Close()
 		if err != nil {
 			log.Println("cannot close temp file, reason: %s", err.Error())
@@ -49,7 +49,7 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 			log.Println("cannot remove temp file, reason: %s", err.Error())
 		}
 
-	}()
+	}(tempfile)
 
 	if len(body.Base64) == 0 {
 		render.JSON(http.StatusBadRequest, fmt.Errorf("base64 string required"))
