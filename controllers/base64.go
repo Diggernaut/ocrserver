@@ -70,7 +70,7 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		err := client.Close()
 		if err != nil {
-			log.Println("cannot remove temp file, reason: %s", err.Error())
+			log.Println("cannot close client, reason: %s", err.Error())
 		}
 	}()
 
