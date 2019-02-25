@@ -61,7 +61,7 @@ func main() {
 
 	log.Println("OCR web server started")
 	log.Printf("listening on port %s", port)
-	http.Transport.DisableKeepAlives = true
+	http.DefaultTransport = &http.Transport{DisableKeepAlives: true}
 	if err := http.ListenAndServe(ip+":"+port, r); err != nil {
 		// logger.Println(err)
 	}
