@@ -67,7 +67,12 @@ func Base64(w http.ResponseWriter, r *http.Request) {
 	if body.PSM > 0 {
 		client.SetPageSegMode(body.PSM)
 	}
-	defer client.Close()
+	defer func() {
+		err := client.Close()
+		if err != nil {
+			log.Println("cannot remove temp file, reason: %s", err.Error())
+		}
+	}()
 
 	client.Languages = []string{"eng"}
 	if body.Languages != "" {
